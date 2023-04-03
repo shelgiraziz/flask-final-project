@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>World Cup Goals</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <canvas id="myChart"></canvas>
+    <script>
+      function getRandomColor() {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      fetch("http://127.0.0.1:5000/")
+        .then((response) => response.json())
+        .then((data) => {
+          const teamNames = Object.keys(data);
+          const goalsScored = Object.values(data);
+
+          const backgroundColors = teamNames.map(() => getRandomColor());
+
+          const config = {
+            type: "bar",
+            data: {
+              labels: teamNames,
+              datasets: [
+                {
+                  label: "Goals Scored",
+                  backgroundColor: backgroundColors,
+                  borderColor: "rgba(255, 99, 132, 1)",
+                  borderWidth: 1,
+                  data: goalsScored,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: "top",
+                },
+                title: {
+                  display: true,
+                  text: "Goals Scored per Team in World Cup 2022",
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          };
+
+          var myChart = new Chart(document.getElementById("myChart"), config);
+        })
+        .catch((error) => console.error(error));
+    </script>
+  </body>
+</html>
